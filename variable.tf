@@ -15,11 +15,9 @@ variable "db_password" {
 variable "access_key" {
   description = "aws access key"
   type = string
-  default = "AKIA4JQ4B57YR6LVZXWH"
 }
 
 variable "secret_key" {
   description = "aws secret key"
   type = string
-  default = "5APeA9l7qB5pfRIlJK8q/EgUnRuk0ZaRA1YDPDMK"
 }
