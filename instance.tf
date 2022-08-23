@@ -1,6 +1,4 @@
-data "aws_availability_zones" "available" {
-    state = "available"
-  }
+
 data "aws_ami" "windows" {
   most_recent = true
   owners      = ["amazon"]
@@ -11,11 +9,28 @@ data "aws_ami" "windows" {
   
 }
 
+
+
+resource "tls_private_key" "rsa" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "local_file" "tf_key" {
+    content  = tls_private_key.rsa.private_key_pem
+    filename = "tfkey"
+}
+
+resource "aws_key_pair" "tf_key"{
+  key_name = "tf_key"
+  public_key = tls_private_key.rsa.public_key_openssh
+}
+
 resource "aws_launch_configuration" "as_conf" {
   name          = "web_config"
   image_id      = data.aws_ami.windows.id
   instance_type = "t2.micro"
-  key_name      = "Terraformfrankfurtorg"
+  key_name      = aws_key_pair.tf_key.key_name
   
   lifecycle {
     create_before_destroy = true
@@ -27,6 +42,8 @@ resource "aws_autoscaling_group" "asg" {
   launch_configuration = aws_launch_configuration.as_conf.name
   min_size             = 1
   max_size             = 2
+  health_check_grace_period = 300
+  health_check_type = "ELB"
   vpc_zone_identifier = [aws_subnet.ec2subnet.id]
 
   lifecycle {
@@ -69,3 +86,4 @@ resource "aws_db_snapshot" "testdbsnap" {
   db_instance_identifier = aws_db_instance.rds_db.id
   db_snapshot_identifier = "testsnapshot1234"
 }
+

@@ -11,13 +11,3 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
-
-variable "access_key" {
-  description = "aws access key"
-  type = string
-}
-
-variable "secret_key" {
-  description = "aws secret key"
-  type = string
-}

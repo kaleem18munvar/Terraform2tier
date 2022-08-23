@@ -13,6 +13,7 @@ resource "aws_nat_gateway" "tnat" {
   tags = {
     Name = "NAT Gateway"
   }
+  depends_on = [aws_internet_gateway.tigw]
   
 }
 
