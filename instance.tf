@@ -31,6 +31,9 @@ resource "aws_launch_configuration" "as_conf" {
   image_id      = data.aws_ami.windows.id
   instance_type = "t2.micro"
   key_name      = aws_key_pair.tf_key.key_name
+  security_groups = ["${aws_security_group.pubsg.id}"]
+  associate_public_ip_address = true
+  
   
   lifecycle {
     create_before_destroy = true
@@ -54,7 +57,7 @@ resource "aws_autoscaling_group" "asg" {
 #DB Instance
 resource "aws_db_subnet_group" "dbsubgrp" {
   name       = "dbsubgrp"
-  subnet_ids = [aws_subnet.rdssubnet.id]
+  subnet_ids = [aws_subnet.rdssubnet.id, aws_subnet.rdssubnet2.id]
 
   tags = {
     Name = "My DB subnet group"
@@ -64,7 +67,7 @@ resource "aws_db_subnet_group" "dbsubgrp" {
 resource "aws_db_instance" "rds_db" {
   identifier            = "mysql-db-01"  
   allocated_storage     = 5
-  availability_zone     = "eu-central-1b"
+  availability_zone     = aws_subnet.rdssubnet.availability_zone
   publicly_accessible   = false
   vpc_security_group_ids               = [aws_security_group.prisg.id]
   db_subnet_group_name = aws_db_subnet_group.dbsubgrp.name

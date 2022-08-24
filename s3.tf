@@ -1,4 +1,4 @@
-
+/*
 resource "aws_s3_bucket" "snapbucket" {
   bucket = "snap-tf-bucket" 
 
@@ -16,3 +16,4 @@ resource "aws_s3_bucket_object" "snapobject"{
     key = aws_db_snapshot.testdbsnap.db_snapshot_identifier
     source = aws_db_snapshot.testdbsnap.db_instance_identifier
 }
+*/
